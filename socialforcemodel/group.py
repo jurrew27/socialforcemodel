@@ -25,7 +25,7 @@ class Group(object):
         self.spawn_max = None
         self.spawn_count = 0
         self.spawn_area = spawn_area
-        self.spawn_method = 'poisson'
+        self.spawn_method = 'normal'
         self.target_area = target_area
         if target_path is None:
             self.path = []
