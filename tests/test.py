@@ -2,12 +2,7 @@ import socialforcemodel as sfm
 import numpy as np
 import matplotlib.pyplot as plt
 import os
-
-try:
-    import progressbar
-except ImportError as e:
-    print("Progressbar package not found. Please run 'pip install progressbar'")
-    exit()
+from tqdm import tqdm
 
 
 def sensor(world, position, sensor_range):
@@ -44,7 +39,7 @@ def plot(item, measurements, fig, subplot=111):
 
 def main(args):
 
-    mean, theta, sigma = 1.3, 0.15, 0.01
+    mean, theta, sigma = 0, 0.15, 0.01
 
     measurements = []
 
@@ -71,14 +66,13 @@ def main(args):
         for group in world.groups:
             group.set_ornstein_uhlenbeck_process(mean, theta, sigma)
 
-        bar = progressbar.ProgressBar()
-        for step in bar(range(args.steps)):
+        for step in tqdm(range(args.steps)):
 
             if not world.step():
                 break
 
             world.update()
-            if step % 5 == 0:
+            if step % 2 == 0:
                 figure = world.plot()
                 figure.savefig("img/%03d.png" % ((step + 1) // 5),
                                bbox_inches = 'tight',
@@ -86,7 +80,7 @@ def main(args):
                 figure.clear()
                 plt.close(figure)
 
-            if step % 5 == 0:
+            if step % 2 == 0:
 
                 near = sensor_near(world)
                 far = sensor_far(world)
