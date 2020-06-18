@@ -8,11 +8,11 @@ groups:
                 x: 0.2
                 y: 0.2
             end:
-                x: 1
+                x: 0.5
                 y: 4.8
         target_area:
             start:
-                x: 29
+                x: 29.5
                 y: 0.2
             end:
                 x: 29.8
@@ -21,7 +21,7 @@ groups:
     -   spawn_rate: 0.33
         spawn_area:
             start:
-                x: 29
+                x: 29.5
                 y: 0.2
             end:
                 x: 29.8
@@ -31,7 +31,7 @@ groups:
                 x: 0.2
                 y: 0.2
             end:
-                x: 1
+                x: 0.5
                 y: 4.8
 
 obstacles:
