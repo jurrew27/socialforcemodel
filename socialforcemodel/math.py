@@ -6,7 +6,11 @@ def length_squared(vector):
 
 def unit_vector(vector):
     """ Returns the unit vector of the vector.  """
-    return vector / np.sqrt(length_squared(vector))
+    l = np.sqrt(length_squared(vector))
+    if l > 0:
+        return vector / l
+    else:
+        return np.zeros(vector.shape)
 
 def angle_between(v1, v2):
     """ Returns the angle in radians between vectors 'v1' and 'v2'::
