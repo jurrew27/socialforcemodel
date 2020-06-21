@@ -2,17 +2,19 @@ import socialforcemodel as sfm
 import matplotlib.pyplot as plt
 import os
 from tqdm import tqdm
+from multiprocessing import Pool
 
+def main(args, iteration):
+    out_dir = f'{args.outfile}_{iteration}'
 
-def main(args):
-    if not os.path.exists("img"):
-        os.makedirs("img")
-    if not os.path.exists("measurements"):
-        os.makedirs("measurements")
+    if not os.path.exists(out_dir):
+        os.makedirs(out_dir)
 
     for rate in args.rates:
-        if not os.path.exists("img/rate_{}".format(rate)):
-            os.makedirs("img/rate_{}".format(rate))
+        out_dir_img = f'{out_dir}/rate_{rate}_img'
+
+        if not os.path.exists(out_dir_img):
+            os.makedirs(out_dir_img)
 
         loader = sfm.ParameterLoader(args.file)
         world = loader.world
@@ -27,14 +29,14 @@ def main(args):
 
         rows = []
 
-        for step in tqdm(range(args.steps), desc=f'Rate {rate}'):
+        for step in tqdm(range(args.steps), desc=f'Iteration {iteration}, rate {rate}'):
             if not world.step():
                 break
 
             world.update()
             if step % log_every == 0:
                 figure = world.plot()
-                figure.savefig("img/rate_{}/%03d.png".format(rate) % ((step + 1) // log_every),
+                figure.savefig(f'{out_dir_img}/%03d.png' % ((step + 1) // log_every),
                                bbox_inches = 'tight',
                                pad_inches = 0.1)
                 figure.clear()
@@ -45,7 +47,7 @@ def main(args):
                 for p in pedestrians:
                     rows.append([world.time, p.id, p.group.id, p.position[0], p.position[1], p.speed])
 
-        with open("{}/rate_{}.csv".format(args.outfile, rate), "w") as outfile:
+        with open(f'{out_dir}/rate_{rate}.csv', 'w') as outfile:
             import csv
             writer = csv.writer(outfile)
             writer.writerow(['time', 'pedestrian_id', 'group_id', 'x', 'y', 'velocity'])
@@ -61,5 +63,8 @@ if __name__ == '__main__':
     parser.add_argument('-s', '--steps', help='Number of steps', type=int, default=500)
     parser.add_argument('-o', '--outfile', help='File for measurements', default='measurements')
     parser.add_argument('-r', '--rates', default=1, nargs='+', type=float),
+    parser.add_argument('-i', '--iterations', help='Number of iterations', type=int, default=1)
     args = parser.parse_args(sys.argv[1:])
-    main(args)
+
+    with Pool() as p:
+        p.starmap(main, zip([args]*args.iterations, range(args.iterations)))
