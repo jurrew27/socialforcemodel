@@ -4,7 +4,7 @@ import numpy as np
 
 @jit(float32[:](float32, float32[:], float32[:], float32, float32, float32,
      float32[:, :], float32[:, :], float32[:], float32, float32, bool_, bool_,
-     float32[:], float32[:], int32))
+     float32[:], float32[:], int32), forceobj=True)
 def calculate_pedestrian_repulsive_force(distance_threshold, self_position, self_velocity,
                                          self_radius, self_speed, self_labda_scale, ped_position, ped_velocity,
                                          ped_radius, world_height, world_width, continuous_domain,
