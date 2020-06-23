@@ -2,6 +2,8 @@ import numpy as np
 import pandas as pd
 import math
 from sklearn.cluster import DBSCAN
+from sklearn import metrics
+from sklearn.mixture import GaussianMixture
 import matplotlib.pyplot as plt
 import os
 
@@ -25,9 +27,14 @@ def analyze_data(args):
         temp_df_1 = df.loc[((df['time'] == t) & (df['group_id'] == 1))]
         data_points_1 = np.column_stack([temp_df_1.x.values, temp_df_1.y.values])
 
-        clustering = DBSCAN(eps=1, min_samples=2, algorithm="ball_tree")
-        fit_0 = clustering.fit_predict(data_points_0)
-        fit_1 = clustering.fit_predict(data_points_1)
+        #clustering = DBSCAN(eps=1, min_samples=2, algorithm="ball_tree")
+        #fit_0 = clustering.fit_predict(data_points_0)
+        #fit_1 = clustering.fit_predict(data_points_1)
+
+        mixture = GaussianMixture(n_components=5, covariance_type='full')
+
+        fit_0 = mixture.fit_predict(data_points_0)
+        fit_1 = mixture.fit_predict(data_points_1)
 
         plt.scatter(data_points_0[:, 0], data_points_0[:, 1], c=fit_0, marker="o", cmap="hot", label="group 1")
         ca = plt.colorbar()
