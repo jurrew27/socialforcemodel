@@ -25,14 +25,20 @@ def analyze_data(args):
         temp_df_1 = df.loc[((df['time'] == t) & (df['group_id'] == 1))]
         data_points_1 = np.column_stack([temp_df_1.x.values, temp_df_1.y.values])
 
-        clustering = DBSCAN(eps=0.6, min_samples=2, n_jobs=-1)
+        clustering = DBSCAN(eps=1, min_samples=2, algorithm="ball_tree")
         fit_0 = clustering.fit_predict(data_points_0)
         fit_1 = clustering.fit_predict(data_points_1)
 
-        plt.scatter(data_points_0[:, 0], data_points_0[:, 1], c=fit_0, marker="o", cmap="hot")
-        plt.scatter(data_points_1[:, 0], data_points_1[:, 1], c=fit_1, marker="^", cmap="cool")
+        plt.scatter(data_points_0[:, 0], data_points_0[:, 1], c=fit_0, marker="o", cmap="hot", label="group 1")
+        ca = plt.colorbar()
+        plt.scatter(data_points_1[:, 0], data_points_1[:, 1], c=fit_1, marker="^", cmap="cool", label="group 2")
+        cb = plt.colorbar()
         plt.xlim(0, 30)
         plt.ylim(0, 5)
+        ca.set_label("group 1")
+        cb.set_label("group 2")
+        plt.legend()
+
         plt.show()
 
 
