@@ -1,3 +1,10 @@
+# Cluster analysis which should find the size and amount of "trains" in the group
+# Code calculates the wrong clusters and cannot find the trains
+# DBSCAN and GaussianMixture clustering methods have been tried and both have failed
+# For GaussianMixture, multiple amount of clusters have been tried and compared but none worked correct
+
+# To run, add csv-file of a measurement in the commandline
+
 import numpy as np
 import pandas as pd
 import math
@@ -5,11 +12,6 @@ from sklearn.cluster import DBSCAN
 from sklearn import metrics
 from sklearn.mixture import GaussianMixture
 import matplotlib.pyplot as plt
-import os
-
-# Change to work universally
-os.chdir("C:/Users/hansp/Desktop/School/Master/Complex_system_simulation/Project/")
-
 
 def analyze_data(args):
     df = pd.read_csv(args.file, sep=",")
@@ -36,6 +38,7 @@ def analyze_data(args):
         fit_0 = mixture.fit_predict(data_points_0)
         fit_1 = mixture.fit_predict(data_points_1)
 
+        # Plot clusters
         plt.scatter(data_points_0[:, 0], data_points_0[:, 1], c=fit_0, marker="o", cmap="hot", label="group 1")
         ca = plt.colorbar()
         plt.scatter(data_points_1[:, 0], data_points_1[:, 1], c=fit_1, marker="^", cmap="cool", label="group 2")

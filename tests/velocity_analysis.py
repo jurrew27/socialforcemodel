@@ -2,8 +2,8 @@ import numpy as np
 import math
 import pandas as pd
 import matplotlib.pyplot as plt
-import os
 
+# Calculate mean velocity per time step with standard deviation
 def analyze_data(args):
     mean_velocities = []
     for f in args.file:
@@ -15,7 +15,7 @@ def analyze_data(args):
         # Calculate mean velocity each time step; start at 0.05 due to the csv file
         file_velocities = []
         for t in np.arange(0.05, 100, 0.1):
-            temp_df = df.loc[df["time"] == np.round(t,2)]
+            temp_df = df.loc[df["time"] == np.round(t, 2)]
             mean_velocity = temp_df.velocity.mean()
 
             # Save mean velocity
@@ -31,8 +31,9 @@ def analyze_data(args):
 
     # plot it
     fig, ax = plt.subplots(1)
-    ax.plot(np.arange(0.05, 100, 0.1), total_mean_velocities, color = 'black')
-    ax.fill_between(np.arange(0.05, 100, 0.1), total_mean_velocities + std_velocities, total_mean_velocities - std_velocities, facecolor='red')
+    ax.plot(np.arange(0.05, 100, 0.1), total_mean_velocities, color='black')
+    ax.fill_between(np.arange(0.05, 100, 0.1), total_mean_velocities + std_velocities,
+                    total_mean_velocities - std_velocities, facecolor='red')
     ax.set_title(r'Mean velocities (rate=%g)' % args.rate)
     ax.legend(loc='upper left')
     ax.set_xlabel('t')
@@ -42,18 +43,9 @@ def analyze_data(args):
     plt.show()
 
 
-
-    #with open(f'{args.outfile}_{iteration}/rate_{rate}.csv', 'w') as outfile:
-    #    import csv
-    #    writer = csv.writer(outfile)
-    #    writer.writerow(['time', 'pedestrian_id', 'group_id', 'x', 'y', 'velocity'])
-    #    for row in rows:
-    #        writer.writerow(row)
-
+# Calculate actual speed as velocities during the simulation are not calculated correctly
 def calculate_real_velocities(args, data):
-
     for id_ped in range(data.pedestrian_id.min(), data.pedestrian_id.max()):
-
         temp_df = data.loc[data["pedestrian_id"] == id_ped]
 
         vec_x = temp_df['x'].values[1:]
@@ -64,7 +56,7 @@ def calculate_real_velocities(args, data):
         delta_x = abs(vec_x - vec_old_x)
         delta_y = abs(vec_y - vec_old_y)
 
-        displacement = list(map(math.sqrt, delta_x**2 + delta_y**2))
+        displacement = list(map(math.sqrt, delta_x ** 2 + delta_y ** 2))
         time_elapsed = temp_df['time'].values[1:] - temp_df['time'].values[:-1]
         proper_velocity = displacement / time_elapsed
 
@@ -75,11 +67,8 @@ def calculate_real_velocities(args, data):
 
     return data
 
-def main(args):
-    #out_dir = f'{args.outfile}_{args.iterations}'
-    #if not os.path.exists(out_dir):
-    #    os.makedirs(out_dir)
 
+def main(args):
     analyze_data(args)
 
 

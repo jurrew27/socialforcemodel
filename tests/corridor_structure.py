@@ -1,3 +1,8 @@
+# Simulates the social force model for the given parameters
+# Iterations are run parallel on the threads available
+# Initialize as: ".yaml file -s #steps -o name outfile -r all rates as e.g. 0.1 0.2 0.3 0.4 -i # iterations per rate"
+# If only .yaml is given, standard values s=500, o="measurements", r=1, i=1 are used
+
 import socialforcemodel as sfm
 import matplotlib.pyplot as plt
 import os
