@@ -1,18 +1,26 @@
-This package contains a Python implementation of the Helbing-Molnár-Farkas-Vicsek Social Force Model. The code was created for a master thesis and is still in active development.
+This repository contains the code for the project fo the Complex System Simulation course of the University of Amsterdam by Hans
+ Pijpers and Jurre Wolsink. It implements the Helbing-Molnár-Farkas-Vicsek Social Force Model package made by Rex Valkering. 
 
-Feel free to clone or fork. For questions regarding the model you can contact me at *[myfullname] at gmail dot com*.
 
-### Installation
+### Requirements
 
-Just checkout the repository and run `python setup.py`.
+- Numpy
+- Scipy
+- Matplotlib
+- PyYAML
+- TQDM
+- Pympler
+- Psutil
+- Numba
 
-### TODO
 
-- Add optimizations to social force calculations.
-- Add GUI to allow run-time parameter tuning and testing.
-- Add unit tests.
-- Let parameterloader give errors for unknown parameters.
-- Make parameterloader case insensitive.
+### Usage
+
+```python simulate.py <config_file (string)> -s --steps <int> -r --rates <float>, <float>, ... -i --iterations <int> -o --output <string>```
+
+For example:
+
+```python simulate.py collisioncorridor.yaml -s 10 -r 0.1 0.2 0.3 -i 2 -o test_run```
 
 ### YAML config files
 
@@ -76,113 +84,3 @@ Pedestrians should always be part of a group. Variables that are not set are inf
 
 ###### Obstacle:
 * `points` (one or more *Point* entities) - series of points. Line segments are drawn between pairs of points.
-
-### Example code
-
-#### Box with exit tunnel
-The following parameter file creates a 10x10 box connected to a 10x4 exit tunnel. The box starts with 100 pedestrians spawned at random positions in the box. Each pedestrian then attempts to navigate through the tunnel using a predefined target path, towards an off-screen target beyond the tunnel.
-
-```yaml
-world_height: 10
-world_width: 20
-groups:
-    -   num_pedestrians: 100
-        spawn_area:
-            start:
-                x: 0.5
-                y: 0.5
-            end:
-                x: 9.5
-                y: 9.5
-        target_area:
-            start:
-                x: 20.0
-                y: 2.5
-            end:
-                x: 25.0
-                y: 7.5
-        target_path:
-            -   x: 9.5
-                y: 5.0
-            -   x: 21.0
-                y: 5.0
-obstacles:
-    -   points:
-            -   x: 10.0
-                y: 0.0
-            -   x: 10.0
-                y: 2.5
-            -   x: 11.0
-                y: 3.5
-            -   x: 20.0
-                y: 3.5
-    -   points:
-            -   x: 20.0
-                y: 6.5
-            -   x: 11.0
-                y: 6.5
-            -   x: 10.0
-                y: 7.5
-            -   x: 10.0
-                y: 10.0
-```
-
-The following Python file loads the parameters from the YAML file, creates a simulation, adds some measurements and runs and plots the situation.
-
-```python
-import os
-
-import socialforcemodel as sfm
-import numpy as np
-import matplotlib.pyplot as plt
-
-def average_speed(world):
-    velocities = []
-    for group in world.groups:
-        for p in group.pedestrians:
-            velocities.append(p.speed)
-    return np.mean(velocities)
-
-def main(args):
-    # Create image directory if it does not exist.
-    image_directory = "img" 
-    if not os.path.exists(image_directory):
-        os.makedirs(image_directory)
-
-    loader = sfm.ParameterLoader(args.file)
-    world = loader.world
-    world.update()
-
-    world.add_measurement(average_speed)
-    figure = world.plot()
-    
-    figure.savefig("{}/0.png".format(image_directory),
-                   bbox_inches = 'tight',
-                   pad_inches = 0.1)
-    figure.clear()
-    plt.close(figure)
-
-    for step in range(args.steps):
-        print("Step {}".format(step + 1))
-        if not world.step():
-            break
-        world.update()
-        if step % 5 == 4:
-            figure = world.plot()
-            figure.savefig("{}/{}.png".format(image_directory, (step + 1) // 5),
-                           bbox_inches = 'tight',
-                           pad_inches = 0.1)
-            figure.clear()
-            plt.close(figure)
-
-    np.savetxt("measurements.txt", world.measurements)
-
-if __name__ == '__main__':
-    import argparse
-    import sys
-    parser = argparse.ArgumentParser()
-    parser.add_argument('file', help='YAML-file')
-    parser.add_argument('-s', '--steps', help='Number of steps', type=int, default=500)
-    args = parser.parse_args(sys.argv[1:])
-    main(args)
-```

@@ -33,9 +33,9 @@ def simulate(args, iteration, rate):
         world.update()
         if step % log_every == 0:
             figure = world.plot()
-            figure.savefig(f'{args.outfile}_{iteration}/rate_{rate}_img/%03d.png' % ((step + 1) // log_every),
+            figure.savefig(f'tests/{args.outfile}_{iteration}/rate_{rate}_img/%03d.png' % ((step + 1) // log_every),
                            bbox_inches='tight',
-                           pad_inches=0.1)
+                           pad_inches=0.1, dpi=150)
             figure.clear()
             plt.close(figure)
 
@@ -43,7 +43,7 @@ def simulate(args, iteration, rate):
             for p in pedestrians:
                 rows.append([world.time, p.id, p.group.id, p.position[0], p.position[1], p.speed])
 
-    with open(f'{args.outfile}_{iteration}/rate_{rate}.csv', 'w') as outfile:
+    with open(f'tests/{args.outfile}_{iteration}/rate_{rate}.csv', 'w') as outfile:
         import csv
         writer = csv.writer(outfile)
         writer.writerow(['time', 'pedestrian_id', 'group_id', 'x', 'y', 'velocity'])
@@ -53,7 +53,7 @@ def simulate(args, iteration, rate):
 
 def main(args):
     for iteration in range(args.iterations):
-        out_dir = f'{args.outfile}_{iteration}'
+        out_dir = f'tests/{args.outfile}_{iteration}'
         if not os.path.exists(out_dir):
             os.makedirs(out_dir)
 
