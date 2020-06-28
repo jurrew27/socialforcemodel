@@ -16,7 +16,7 @@ This repository contains the code for the project fo the Complex System Simulati
 
 ### Usage
 
-```python simulate.py <config_file (string)> -s --steps <int> -r --rates <float>, <float>, ... -i --iterations <int> -o --output <string>```
+```python simulate.py <config_file (string)> -s --steps <int> -r --rates <float>, <float>, ... -i --iterations <int> -o --outfile <string>```
 
 For example:
 
